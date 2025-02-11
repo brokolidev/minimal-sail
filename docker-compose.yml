@@ -1,5 +1,5 @@
 services:
-    laravel.test:
+    cpsy300:
         build:
             context: './vendor/laravel/sail/runtimes/8.4'
             dockerfile: Dockerfile
@@ -22,8 +22,8 @@ services:
         networks:
             - sail
         depends_on:
-            - mysql
-    mysql:
+            - cpsy300.db
+    cpsy300.db:
         image: 'mysql/mysql-server:8.0'
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'
@@ -39,14 +39,6 @@ services:
             - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
         networks:
             - sail
-        healthcheck:
-            test:
-                - CMD
-                - mysqladmin
-                - ping
-                - '-p${DB_PASSWORD}'
-            retries: 3
-            timeout: 5s
 networks:
     sail:
         driver: bridge
