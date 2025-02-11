@@ -9,4 +9,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::post('/students', [StudentController::class, 'store']);
+Route::post('/student', [StudentController::class, 'store']);
+
+Route::get('/test', function() {
+    return "test";
+});

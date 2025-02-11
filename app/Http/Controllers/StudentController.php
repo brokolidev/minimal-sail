@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 
 class StudentController extends Controller
 {
@@ -25,10 +27,22 @@ class StudentController extends Controller
             'gpa'   => 'required|numeric|min:0|max:4',
         ]);
 
-        // Create a new student
+        // Check if a student with the same name already exists
+        $existingStudent = Student::where('name', $request->name)->first();
+        if ($existingStudent) {
+            throw ValidationException::withMessages([
+                'name' => 'A student aleady exists.'
+            ])->status(Response::HTTP_CONFLICT);
+        }
+
+            // Create a new student
         $student = Student::create($validatedData);
 
         // Return a response
-        return response()->json($student, 201);
+        return response()->json([
+            'message' => 'Student created successfully',
+            'timestamp' => date('Y-m-d h:i:s'),
+            'data' => $student
+        ], 201);
     }
 }
