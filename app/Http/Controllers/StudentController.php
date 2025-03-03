@@ -45,4 +45,32 @@ class StudentController extends Controller
             'data' => $student
         ], 201);
     }
+    
+    public function update(Request $request, Student $student)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'name'  => 'string|max:255',
+            'age'   => 'integer',
+            'grade' => 'integer',
+            'gpa'   => 'numeric|min:0|max:4',
+        ]);
+        
+        // Update the student
+        $student->name = $validatedData['name'] ?? $student->name;
+        $student->age = $validatedData['age'] ?? $student->age;
+        $student->grade = $validatedData['grade'] ?? $student->grade;
+        $student->gpa = $validatedData['gpa'] ?? $student->gpa;
+        
+        if($student->isDirty()) {
+            $student->save();
+        }
+        
+        // Return a response
+        return response()->json([
+            'message' => 'Student updated successfully',
+            'timestamp' => date('Y-m-d h:i:s'),
+            'data' => $student
+        ], 200);
+    }
 }

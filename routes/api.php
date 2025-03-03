@@ -11,6 +11,4 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/student', [StudentController::class, 'store']);
 
-Route::get('/test', function() {
-    return "test";
-});
+Route::put('/student/{student}', [StudentController::class, 'update']);
