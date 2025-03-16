@@ -12,3 +12,4 @@ Route::get('/user', function (Request $request) {
 Route::post('/student', [StudentController::class, 'store']);
 
 Route::put('/student/{student}', [StudentController::class, 'update']);
+Route::delete('/student/{studentId}', [StudentController::class, 'delete']);
