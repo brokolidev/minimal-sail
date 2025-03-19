@@ -5,12 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class StudentController extends Controller
 {
+    public function show(string $studentId)
+    {
+        $student = Student::findOr($studentId, function() {
+            throw new NotFoundHttpException('Student not exists');
+        });
+
+        return response()->json([
+            'message'   => 'Student retrieved successfully',
+            'timestamp' => date('Y-m-d h:i:s'),
+            'data'      => $student,
+        ], 200);
+    }
 
     /**
      * Creating a new student
@@ -26,8 +39,12 @@ class StudentController extends Controller
             'student_id'  => 'required|string|max:255',
             'student_name'   => 'required|string|max:255',
             'course_name' => 'required|string|max:255',
-            'date' => 'required|date',
+            'date' => 'required',
         ]);
+
+        $validatedData['date'] = Carbon::createFromFormat('d/m/Y',
+            $validatedData['date'])->format('Y-m-d');
+
 
         // Check if a student with the same name already exists
         $existingStudent = Student::where('student_id', $request->student_id)->first();
@@ -48,21 +65,23 @@ class StudentController extends Controller
         ], 201);
     }
 
-    public function update(Request $request, Student $student)
+    public function update(Request $request, string $studentId)
     {
+        $student = Student::findOr($studentId, function() {
+            throw new NotFoundHttpException('Student not exists');
+        });
+
         // Validate the request data
         $validatedData = $request->validate([
-            'name'  => 'string|max:255',
-            'age'   => 'integer',
-            'grade' => 'integer',
-            'gpa'   => 'numeric|min:0|max:4',
+            'student_id'  => 'string|max:255',
+            'student_name'   => 'string|max:255',
+            'course_name' => 'string|max:255',
         ]);
 
         // Update the student
-        $student->name = $validatedData['name'] ?? $student->name;
-        $student->age = $validatedData['age'] ?? $student->age;
-        $student->grade = $validatedData['grade'] ?? $student->grade;
-        $student->gpa = $validatedData['gpa'] ?? $student->gpa;
+        $student->student_id = $validatedData['student_id'] ?? $student->student_id;
+        $student->student_name = $validatedData['student_name'] ?? $student->student_name;
+        $student->course_name = $validatedData['course_name'] ?? $student->course_name;
 
         if($student->isDirty()) {
             $student->save();
