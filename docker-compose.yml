@@ -1,5 +1,5 @@
 services:
-    cpsy300:
+    studentrestfulapi:
         build:
             context: './vendor/laravel/sail/runtimes/8.4'
             dockerfile: Dockerfile
@@ -19,11 +19,13 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
+        stdin_open: true
+        tty: true
         networks:
             - sail
         depends_on:
-            - cpsy300.db
-    cpsy300.db:
+            - studentrestfulapi.db
+    studentrestfulapi.db:
         image: 'mysql/mysql-server:8.0'
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'

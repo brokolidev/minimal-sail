@@ -17,10 +17,10 @@ class StudentFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'age' => fake()->numberBetween(18, 60),
-            'grade' => fake()->numberBetween(1, 12),
-            'gpa' => fake()->randomFloat(2, 0, 4),
+            'student_id' => fake()->uuid(),
+            'student_name' => fake()->name(),
+            'course_name' => fake()->country(),
+            'date' => fake()->date('Y-m-d'),
         ];
     }
 }
